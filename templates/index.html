@@ -1,23 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="./output.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-</head>
-<body>
-<a href="">Home</a>
-<div>
-    <a href="./location.html"> Location </a>
-</div>
+{% extends 'base.html' %}
 
-<div>
-    <a href="./aboutus.html"> About Us </a> 
-</div>  
+{% block content %}
+<body class ="h-screen bg-image">
+  <section>
+    <div id="location" class="container flex">
+      <a href="/location.html">
+        <img src="./static/assets/circle.jpg" alt="Circle" class="h-16 w-16"/>
+      </a>
+    </div>
 
+    <div>
+      <a href="/aboutus.html">About</a>
+      <a href="/artists.html">Artists</a>
+    </div>
+    
+  </section>
 
+  
+
+  
 </body>
-</html>
+{% endblock content %}
