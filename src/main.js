@@ -1,0 +1,102 @@
+// Socket.io connection
+const socket = io({
+  auth: {
+    serverOffset: 0
+  }
+});
+
+const messages = document.querySelector('#messages');
+const form = document.querySelector('#chat-form');
+const input = document.querySelector('#chat-input');
+
+// Handle Enter key to send message
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage(e);
+  }
+});
+
+socket.on('chat message', (msg, serverOffset) => {
+  const item = document.createElement('div');
+  item.classList.add('mb-2');
+  item.innerHTML = `<span class="font-bold text-blue-700">Visitor:</span> <span class="text-black">${msg}</span>`;
+  messages.appendChild(item);
+  messages.scrollTop = messages.scrollHeight;
+  socket.auth.serverOffset = serverOffset;
+});
+
+function sendMessage(e) {
+  e.preventDefault();
+  if (input.value) {
+    const clientOffset = `${socket.id}-${Date.now()}`;
+    socket.emit('chat message', input.value, clientOffset, () => {
+      // Message successfully sent
+    });
+    input.value = '';
+  }
+}
+
+function openForm() {
+  document.getElementById("myForm").classList.remove("hidden");
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+
+function openLocationModal() {
+  document.getElementById("locationModal").style.display = "block";
+}
+
+function closeLocationModal() {
+  document.getElementById("locationModal").style.display = "none";
+}
+
+function openAboutUsModal() {
+  document.getElementById("aboutUsModal").style.display = "block";
+}
+
+function closeAboutUsModal() {
+  document.getElementById("aboutUsModal").style.display = "none";
+}
+
+function openArtistsModal() {
+  document.getElementById("artistsModal").style.display = "block";
+}
+
+function closeArtistsModal() {
+  document.getElementById("artistsModal").style.display = "none";
+}
+
+function openWorkshopsModal() {
+  document.getElementById("workshopsModal").style.display = "block";
+}
+
+function closeWorkshopsModal() {
+  document.getElementById("workshopsModal").style.display = "none";
+}
+
+function openGalleryModal() {
+  document.getElementById("galleryModal").style.display = "block";
+}
+
+function closeGalleryModal() {
+  document.getElementById("galleryModal").style.display = "none";
+}
+
+function openEnvironmentalModal() {
+  document.getElementById("environmentalModal").style.display = "block";
+}
+
+function closeEnvironmentalModal() {
+  document.getElementById("environmentalModal").style.display = "none";
+}
+
+function openTourModal() {
+  document.getElementById("tourModal").style.display = "block";
+}
+
+function closeTourModal() {
+  document.getElementById("tourModal").style.display = "none";
+}

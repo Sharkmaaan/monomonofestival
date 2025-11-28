@@ -295,7 +295,7 @@
       <button onclick="closeForm()" class="bg-red-600 text-white px-2 py-0 text-xs font-bold border border-gray-300 hover:bg-red-700" style="min-width: 16px; height: 16px;">X</button>
     </div>
 
-    <form action="/action_page.php" class="border-2 border-t-0 border-gray-400" style="background-color: #E6E6E6;">
+    <form id="chat-form" onsubmit="sendMessage(event)" class="border-2 border-t-0 border-gray-400" style="background-color: #E6E6E6;">
       <!-- Menu Bar -->
       <div class="px-2 py-1 text-xs border-b border-gray-400" style="background-color: #F0F0F0;">
         <span class="font-bold">File</span> |
@@ -305,20 +305,17 @@
       </div>
 
       <!-- Chat Display Area -->
-      <div class="p-2 bg-white border-2 border-gray-300 m-2 overflow-y-auto" style="height: 180px; font-size: 11px;">
+      <div id="messages" class="p-2 bg-white border-2 border-gray-300 m-2 overflow-y-auto" style="height: 180px; font-size: 11px;">
         <div class="mb-2">
-          <span class="font-bold text-blue-700">BuddyName:</span>
-          <span class="text-black"> Hey! Welcome to the chat!</span>
-        </div>
-        <div class="mb-2">
-          <span class="font-bold text-red-700">You:</span>
-          <span class="text-black"> Hi there!</span>
+          <span class="font-bold text-blue-700">System:</span>
+          <span class="text-black"> Connected to chat! Say hello!</span>
         </div>
       </div>
 
       <!-- Input Area -->
       <div class="p-2">
         <textarea
+          id="chat-input"
           placeholder="Type message here..."
           name="msg"
           required
@@ -360,71 +357,8 @@
     </form>
   </div>
 
-  <script>
-    function openForm() {
-      document.getElementById("myForm").style.display = "block";
-    }
-
-    function closeForm() {
-      document.getElementById("myForm").style.display = "none";
-    }
-
-    function openLocationModal() {
-      document.getElementById("locationModal").style.display = "block";
-    }
-
-    function closeLocationModal() {
-      document.getElementById("locationModal").style.display = "none";
-    }
-
-    function openAboutUsModal() {
-      document.getElementById("aboutUsModal").style.display = "block";
-    }
-
-    function closeAboutUsModal() {
-      document.getElementById("aboutUsModal").style.display = "none";
-    }
-
-    function openArtistsModal() {
-      document.getElementById("artistsModal").style.display = "block";
-    }
-
-    function closeArtistsModal() {
-      document.getElementById("artistsModal").style.display = "none";
-    }
-
-    function openWorkshopsModal() {
-      document.getElementById("workshopsModal").style.display = "block";
-    }
-
-    function closeWorkshopsModal() {
-      document.getElementById("workshopsModal").style.display = "none";
-    }
-
-    function openGalleryModal() {
-      document.getElementById("galleryModal").style.display = "block";
-    }
-
-    function closeGalleryModal() {
-      document.getElementById("galleryModal").style.display = "none";
-    }
-
-    function openEnvironmentalModal() {
-      document.getElementById("environmentalModal").style.display = "block";
-    }
-
-    function closeEnvironmentalModal() {
-      document.getElementById("environmentalModal").style.display = "none";
-    }
-
-    function openTourModal() {
-      document.getElementById("tourModal").style.display = "block";
-    }
-
-    function closeTourModal() {
-      document.getElementById("tourModal").style.display = "none";
-    }
-  </script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="main.js"></script>
 
 
 </body>
