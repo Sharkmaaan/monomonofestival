@@ -10,6 +10,7 @@ const form = document.querySelector('#chat-form');
 const input = document.querySelector('#chat-input');
 
 // Handle Enter key to send message
+//TODO: add support for using send button to send message
 input.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
@@ -17,10 +18,11 @@ input.addEventListener('keydown', (e) => {
   }
 });
 
-socket.on('chat message', (msg, serverOffset) => {
+socket.on('chat message', (msg, serverOffset, senderId) => {
   const item = document.createElement('div');
   item.classList.add('mb-2');
-  item.innerHTML = `<span class="font-bold text-blue-700">Visitor:</span> <span class="text-black">${msg}</span>`;
+    //TODO: add random username generator
+  item.innerHTML = `<span class="font-bold text-blue-700">${senderId}:</span> <span class="text-black">${msg}</span>`;
   messages.appendChild(item);
   messages.scrollTop = messages.scrollHeight;
   socket.auth.serverOffset = serverOffset;
@@ -38,7 +40,7 @@ function sendMessage(e) {
 }
 
 function openForm() {
-  document.getElementById("myForm").classList.remove("hidden");
+  document.getElementById("myForm").style.display = "block";
 }
 
 function closeForm() {
@@ -100,3 +102,22 @@ function openTourModal() {
 function closeTourModal() {
   document.getElementById("tourModal").style.display = "none";
 }
+
+// Expose functions to global scope for inline onclick handlers
+window.openForm = openForm;
+window.closeForm = closeForm;
+window.openLocationModal = openLocationModal;
+window.closeLocationModal = closeLocationModal;
+window.openAboutUsModal = openAboutUsModal;
+window.closeAboutUsModal = closeAboutUsModal;
+window.openArtistsModal = openArtistsModal;
+window.closeArtistsModal = closeArtistsModal;
+window.openWorkshopsModal = openWorkshopsModal;
+window.closeWorkshopsModal = closeWorkshopsModal;
+window.openGalleryModal = openGalleryModal;
+window.closeGalleryModal = closeGalleryModal;
+window.openEnvironmentalModal = openEnvironmentalModal;
+window.closeEnvironmentalModal = closeEnvironmentalModal;
+window.openTourModal = openTourModal;
+window.closeTourModal = closeTourModal;
+window.sendMessage = sendMessage;

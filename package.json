@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Mono Mono festival website with real-time chat",
   "type": "module",
-  "main": "chat.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node chat.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "@socket.io/cluster-adapter": "^0.3.0",

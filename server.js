@@ -8,6 +8,7 @@ import { open } from 'sqlite';
 import { availableParallelism } from 'node:os';
 import cluster from 'node:cluster';
 import { createAdapter, setupPrimary } from '@socket.io/cluster-adapter';
+import { NicknameGenerator } from './namegenerator.js';
 
 if (cluster.isPrimary) {
   const numCPUs = availableParallelism();
@@ -19,6 +20,7 @@ if (cluster.isPrimary) {
 
   setupPrimary();
 } else {
+  const nicknameGen = new NicknameGenerator();
   const db = await open({
     filename: 'data/chat.db',
     driver: sqlite3.Database
@@ -62,7 +64,7 @@ if (cluster.isPrimary) {
         }
         return;
       }
-      io.emit('chat message', msg, result.lastID);
+      io.emit('chat message', msg, result.lastID, nicknameGen.generate(socket.id));
       callback();
     });
 
@@ -71,7 +73,7 @@ if (cluster.isPrimary) {
         await db.each('SELECT id, content FROM messages WHERE id > ?',
           [socket.handshake.auth.serverOffset || 0],
           (_err, row) => {
-            socket.emit('chat message', row.content, row.id);
+            socket.emit('chat message', row.content, row.id, nicknameGen.generate(row.sender_id));
           }
         )
       } catch (e) {
