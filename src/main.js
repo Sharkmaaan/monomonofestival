@@ -41,6 +41,7 @@ function sendMessage(e) {
 
 function openForm() {
   document.getElementById("myForm").style.display = "block";
+  messages.scrollTop = messages.scrollHeight;
 }
 
 function closeForm() {

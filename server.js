@@ -34,6 +34,14 @@ if (cluster.isPrimary) {
     );
   `);
 
+  // If an older DB exists without `sender_id`, add the column so we can
+  // persist which socket sent each message. This preserves existing data.
+  const cols = await db.all("PRAGMA table_info('messages')");
+  const hasSender = cols.some(c => c.name === 'sender_id');
+  if (!hasSender) {
+    await db.exec("ALTER TABLE messages ADD COLUMN sender_id TEXT;");
+  }
+
   const app = express();
   const server = createServer(app);
   const io = new Server(server, {
@@ -55,7 +63,7 @@ if (cluster.isPrimary) {
     socket.on('chat message', async (msg, clientOffset, callback) => {
       let result;
       try {
-        result = await db.run('INSERT INTO messages (content, client_offset) VALUES (?, ?)', msg, clientOffset);
+        result = await db.run('INSERT INTO messages (content, client_offset, sender_id) VALUES (?, ?, ?)', msg, clientOffset, socket.id);
       } catch (e) {
         if (e.errno === 19 /* SQLITE_CONSTRAINT */ ) {
           callback();
@@ -70,7 +78,7 @@ if (cluster.isPrimary) {
 
     if (!socket.recovered) {
       try {
-        await db.each('SELECT id, content FROM messages WHERE id > ?',
+        await db.each('SELECT id, content, sender_id FROM messages WHERE id > ?',
           [socket.handshake.auth.serverOffset || 0],
           (_err, row) => {
             socket.emit('chat message', row.content, row.id, nicknameGen.generate(row.sender_id));

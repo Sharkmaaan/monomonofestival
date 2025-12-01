@@ -1,16 +1,20 @@
 // Array of nicknames
 const nicknames = [
   "Feetlover",
-  "Cucumberking",
+  "CucumberKing",
   "Jokasmoka",
   "xXPussyslayer69Xx",
   "MrBombastic",
   "MrsBombastic",
   "Yomama",
-  "Showersareforlosers"
+  "Showersareforlosers",
+  "Woolomoolo",
+  "OogieBoogie",
+  "ThatDamnPeacock",
+  "HONK",
+  "LifeIsPakora",
+  "MomSpaghetti",
 ];
-    const userNicknames = new Map();
-
     export class NicknameGenerator {
         constructor() {
             this.userNicknames = new Map();
