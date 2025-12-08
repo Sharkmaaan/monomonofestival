@@ -21,7 +21,6 @@ input.addEventListener('keydown', (e) => {
 socket.on('chat message', (msg, serverOffset, senderId) => {
   const item = document.createElement('div');
   item.classList.add('mb-2');
-    //TODO: add random username generator
   item.innerHTML = `<span class="font-bold text-blue-700">${senderId}:</span> <span class="text-black">${msg}</span>`;
   messages.appendChild(item);
   messages.scrollTop = messages.scrollHeight;
@@ -37,6 +36,14 @@ function sendMessage(e) {
     });
     input.value = '';
   }
+}
+
+function sendWarn() {
+  const warnMessage = "Better back off bro";
+  const clientOffset = `${socket.id}-${Date.now()}`;
+  socket.emit('chat message', warnMessage, clientOffset, () => {
+    // Warning message sent
+  });
 }
 
 function openForm() {
@@ -122,3 +129,4 @@ window.closeEnvironmentalModal = closeEnvironmentalModal;
 window.openTourModal = openTourModal;
 window.closeTourModal = closeTourModal;
 window.sendMessage = sendMessage;
+window.sendWarn = sendWarn;
