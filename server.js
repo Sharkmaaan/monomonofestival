@@ -42,6 +42,12 @@ if (cluster.isPrimary) {
     await db.exec("ALTER TABLE messages ADD COLUMN sender_id TEXT;");
   }
 
+  // Add timestamp column if it doesn't exist
+  const hasTimestamp = cols.some(c => c.name === 'timestamp');
+  if (!hasTimestamp) {
+    await db.exec("ALTER TABLE messages ADD COLUMN timestamp TEXT;");
+  }
+
   const app = express();
   const server = createServer(app);
   const io = new Server(server, {
@@ -60,10 +66,10 @@ if (cluster.isPrimary) {
   });
 
   io.on('connection', async (socket) => {
-    socket.on('chat message', async (msg, clientOffset, callback) => {
+    socket.on('chat message', async (timestamp, msg, clientOffset, callback) => {
       let result;
       try {
-        result = await db.run('INSERT INTO messages (content, client_offset, sender_id) VALUES (?, ?, ?)', msg, clientOffset, socket.id);
+        result = await db.run('INSERT INTO messages (content, client_offset, sender_id, timestamp) VALUES (?, ?, ?, ?)', msg, clientOffset, socket.id, timestamp);
       } catch (e) {
         if (e.errno === 19 /* SQLITE_CONSTRAINT */ ) {
           callback();
@@ -72,16 +78,16 @@ if (cluster.isPrimary) {
         }
         return;
       }
-      io.emit('chat message', msg, result.lastID, nicknameGen.generate(socket.id));
+      io.emit('chat message', timestamp, msg, result.lastID, nicknameGen.generate(socket.id));
       callback();
     });
 
     if (!socket.recovered) {
       try {
-        await db.each('SELECT id, content, sender_id FROM messages WHERE id > ?',
+        await db.each('SELECT id, content, sender_id, timestamp FROM messages WHERE id > ?',
           [socket.handshake.auth.serverOffset || 0],
           (_err, row) => {
-            socket.emit('chat message', row.content, row.id, nicknameGen.generate(row.sender_id));
+            socket.emit('chat message', row.timestamp, row.content, row.id, nicknameGen.generate(row.sender_id));
           }
         )
       } catch (e) {

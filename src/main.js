@@ -9,6 +9,8 @@ const messages = document.querySelector('#messages');
 const form = document.querySelector('#chat-form');
 const input = document.querySelector('#chat-input');
 
+let lastMessageDate = null;
+
 // Handle Enter key to send message
 //TODO: add support for using send button to send message
 input.addEventListener('keydown', (e) => {
@@ -18,10 +20,51 @@ input.addEventListener('keydown', (e) => {
   }
 });
 
-socket.on('chat message', (msg, serverOffset, senderId) => {
+function getDateString(date) {
+  const today = new Date();
+  const messageDate = new Date(date);
+
+  // Reset hours to compare just the date
+  today.setHours(0, 0, 0, 0);
+  messageDate.setHours(0, 0, 0, 0);
+
+  const diffTime = today - messageDate;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+
+  const day = new Date(date).getDate().toString().padStart(2, '0');
+  const month = (new Date(date).getMonth() + 1).toString().padStart(2, '0');
+  const year = new Date(date).getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+socket.on('chat message', (timestamp, msg, serverOffset, senderId) => {
+  // Add date divider if needed
+  if (timestamp) {
+    const messageDate = new Date(timestamp);
+    const messageDateStr = messageDate.toDateString();
+
+    if (lastMessageDate !== messageDateStr) {
+      const divider = document.createElement('div');
+      divider.classList.add('my-3', 'text-center');
+      divider.innerHTML = `<div class="inline-block px-3 py-1 text-xs font-bold" style="background-color: #D3D3D3; border: 1px solid #808080; color: #000;">${getDateString(timestamp)}</div>`;
+      messages.appendChild(divider);
+      lastMessageDate = messageDateStr;
+    }
+  }
+
   const item = document.createElement('div');
   item.classList.add('mb-2');
-  item.innerHTML = `<span class="font-bold text-blue-700">${senderId}:</span> <span class="text-black">${msg}</span>`;
+  let timeString = '';
+  if (timestamp) {
+    const date = new Date(timestamp);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    timeString = ` <span class="font-bold text-blue-700">(${hours}:${minutes})</span>`;
+  }
+  item.innerHTML = `<span class="font-bold text-blue-700">${senderId}${timeString}:</span> <span class="text-black">${msg}</span>`;
   messages.appendChild(item);
   messages.scrollTop = messages.scrollHeight;
   socket.auth.serverOffset = serverOffset;
@@ -31,7 +74,7 @@ function sendMessage(e) {
   e.preventDefault();
   if (input.value) {
     const clientOffset = `${socket.id}-${Date.now()}`;
-    socket.emit('chat message', input.value, clientOffset, () => {
+    socket.emit('chat message', new Date(), input.value, clientOffset, () => {
       // Message successfully sent
     });
     input.value = '';
@@ -39,9 +82,9 @@ function sendMessage(e) {
 }
 
 function sendWarn() {
-  const warnMessage = "Better back off bro";
+  const warnMessage = "I'm calling the police!";
   const clientOffset = `${socket.id}-${Date.now()}`;
-  socket.emit('chat message', warnMessage, clientOffset, () => {
+  socket.emit('chat message', new Date() , warnMessage, clientOffset, () => {
     // Warning message sent
   });
 }
