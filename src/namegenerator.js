@@ -7,7 +7,12 @@ const nicknames = [
   "MrBombastic",
   "MrsBombastic",
   "Yomama",
-  "Showersareforlosers"
+  "Showersareforlosers",
+  "Cookiemonster",
+  "ThatDamnPeacock",
+  "LadyGagaFan123",
+  "MakeMonoMonoGreatAgain",
+  "Scoobydoobydoo",
 ];
     const userNicknames = new Map();
 
