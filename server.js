@@ -8,7 +8,7 @@ import { open } from 'sqlite';
 import { availableParallelism } from 'node:os';
 import cluster from 'node:cluster';
 import { createAdapter, setupPrimary } from '@socket.io/cluster-adapter';
-import { NicknameGenerator } from './namegenerator.js';
+import { NicknameGenerator } from './src/namegenerator.js';
 
 if (cluster.isPrimary) {
   const numCPUs = availableParallelism();
