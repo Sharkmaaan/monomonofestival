@@ -9,6 +9,7 @@ import { availableParallelism } from 'node:os';
 import cluster from 'node:cluster';
 import { createAdapter, setupPrimary } from '@socket.io/cluster-adapter';
 import { NicknameGenerator } from './src/namegenerator.js';
+import { mkdirSync } from 'node:fs';
 
 if (cluster.isPrimary) {
   const numCPUs = availableParallelism();
@@ -20,6 +21,13 @@ if (cluster.isPrimary) {
 
   setupPrimary();
 } else {
+  // Create data directory if it doesn't exist
+  try {
+    mkdirSync('data', { recursive: true });
+  } catch (err) {
+    // Directory might already exist, ignore error
+  }
+
   const nicknameGen = new NicknameGenerator();
   const db = await open({
     filename: 'data/chat.db',
